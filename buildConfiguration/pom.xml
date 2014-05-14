@@ -1,0 +1,511 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+
+	<packaging>pom</packaging>
+
+	<groupId>net.akehurst.uml.codeGenerator</groupId>
+	<artifactId>uml.codeGenerator.buildConfiguration</artifactId>
+	<version>0.1.0</version>
+
+	<!-- More Project Information -->
+	<name>${project.artifactId}</name>
+	<description>Default confuiguration of maven plugins for use with the uml.codeGenerator</description>
+	<url>...</url>
+	<inceptionYear>2014</inceptionYear>
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+			<distribution></distribution>
+			<comments>(c) Dr. David H. Akehurst</comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Dr. David H. Akehurst</name>
+		<url></url>
+	</organization>	
+	
+	<scm>
+		<connection>scm:git:git://github.com/dhakehurst/uml.codeGenerator.git</connection>
+	</scm>
+
+
+	<build>
+
+        <!-- these properties are set by the activated language profile -->
+		<sourceDirectory>${main.directory}</sourceDirectory>
+		<testSourceDirectory>${test.directory}</testSourceDirectory>
+
+		<pluginManagement>
+
+			<plugins>
+
+				<plugin>
+                    <groupId>de.smartics.maven.plugin</groupId>
+                    <artifactId>maven-buildmetadata-plugin</artifactId>
+                    <version>1.1.5</version>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>provide-buildmetadata</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+				</plugin>
+
+				<!-- Model -->
+				<plugin>
+					<groupId>net.akehurst.maven.plugins</groupId>
+					<artifactId>eclipse-uml-maven-plugin</artifactId>
+                    <version>0.7.0</version>
+                    <extensions>true</extensions>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>net.akehurst.uml.codeGenerator</groupId>
+			<artifactId>uml.codeGenerator.java</artifactId>
+			<version>0.1.0</version>		
+		</dependency>
+		<dependency>
+			<groupId>net.akehurst.uml.codeGenerator</groupId>
+			<artifactId>uml.codeGenerator.csharp</artifactId>
+			<version>0.1.0</version>		
+		</dependency>
+		<dependency>
+			<groupId>net.akehurst.uml.codeGenerator</groupId>
+			<artifactId>uml.codeGenerator.cpp</artifactId>
+			<version>0.1.0</version>		
+		</dependency>
+	
+	</dependencies>  
+
+	<profiles>
+
+		<profile>
+			<id>jdk_1_7</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<main.directory>src/main/jdk_1_7</main.directory>
+				<test.directory>src/test/jdk_1_7</test.directory>
+				<module.type>jar</module.type>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+						<executions>
+							<execution>
+								<id>compile</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+		
+					<!-- configure test runner -->
+					<plugin>
+					    <groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-surefire-plugin</artifactId>
+					    <version>2.12.4</version>
+					    <configuration>
+							<includes>
+							 <include>**/*_Test.java</include>
+							</includes>
+					    </configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<classifier>jdk_1_7</classifier>
+						</configuration>
+						<executions>
+							<execution>
+								<id>package</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<version>2.5.1</version>
+						<executions>
+							<execution>
+								<id>install</id>
+								<phase>install</phase>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+	
+				</plugins>
+			</build>
+		
+			<dependencies>
+		
+			    <dependency>
+			      <groupId>junit</groupId>
+			      <artifactId>junit</artifactId>
+			      <version>4.11</version>
+			      <scope>test</scope>
+			    </dependency>
+		
+			</dependencies>
+
+		</profile>
+		
+		<profile>
+		    <id>csharp</id>
+		    <activation>
+				<activeByDefault>false</activeByDefault>
+		    </activation>
+			<properties>
+				<main.directory>src/main/csharp</main.directory>
+				<test.directory>src/test/csharp</test.directory>
+				<module.type>dotnet-library</module.type>
+			</properties>
+
+			<build>
+
+				<plugins>
+      <plugin>
+        <groupId>org.apache.npanday.plugins</groupId>
+        <artifactId>NPanday.Plugin.Settings.JavaBinding</artifactId>
+        <version>1.5.0-incubating-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-generate-settings</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>generate-settings</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.npanday.plugins</groupId>
+        <artifactId>maven-resgen-plugin</artifactId>
+        <version>1.5.0-incubating-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-copy-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-generate</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-generate-existing-resx-to-resource</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate-existing-resx-to-resource</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>	
+      <plugin>
+        <groupId>org.apache.npanday.plugins</groupId>
+        <artifactId>maven-compile-plugin</artifactId>
+        <version>1.5.0-incubating-SNAPSHOT</version>
+        <extensions>true</extensions>
+            <configuration>
+		<artifactType>dotnet-library</artifactType>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+        <executions>
+          <execution>
+            <id>default-generate-assembly-info</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-assembly-info</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-process-sources</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>process-sources</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-process-test-sources</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>process-test-sources</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-initialize</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>initialize</goal>
+            </goals>
+            <configuration>
+              <frameworkVersion>4.0</frameworkVersion>
+              <testFrameworkVersion>4.0</testFrameworkVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.npanday.plugins</groupId>
+        <artifactId>maven-test-plugin</artifactId>
+        <version>1.5.0-incubating-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-process-test-configs</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>process-test-configs</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.npanday.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>1.5.0-incubating-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-install</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+				</plugins>
+			</build>
+		
+			<dependencies>
+		
+		
+			</dependencies>
+
+		</profile>		
+		
+		<profile>
+		    <id>cpp</id>
+		    <activation>
+				<activeByDefault>false</activeByDefault>
+		    </activation>
+			<properties>
+				<main.directory>src/main/cpp</main.directory>
+				<test.directory>src/test/cpp</test.directory>
+				<module.type>nar</module.type>
+			</properties>
+			<build>
+				<plugins>
+		
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>nar-maven-plugin</artifactId>
+						<version>3.0.0-scijava-2</version>
+						<configuration>
+							<libraries>
+								<library>
+									<type>shared</type>
+								</library>
+							</libraries>
+							<cpp>
+								<sourceDirectory>${main.directory}</sourceDirectory>
+								<includes>
+									<include>**/*.cpp</include>
+								</includes>
+							</cpp>
+
+						</configuration>
+						<executions>
+							<execution>
+								<id>validate</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>nar-validate</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>generate-sources</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>nar-download</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>process-sources</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>nar-unpack</goal>
+									<goal>nar-gnu-configure</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>generate-resources</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>nar-system-generate</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>compile</id>
+								<phase>compile</phase>
+								<goals>
+
+									<goal>nar-javah</goal>
+									<goal>nar-gnu-make</goal>
+									<goal>nar-compile</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>process-classes</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>nar-gnu-process</goal>
+								</goals>
+							</execution>
+							<!--<execution>
+								<id>test-compile</id>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>-->
+							<execution>
+								<id>process-test-classes</id>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>nar-testCompile</goal>
+								</goals>
+								<configuration>
+									<cpp>
+										<sourceDirectory>${test.directory}</sourceDirectory>
+										<includes>
+											<include>**/*.cpp</include>
+										</includes>
+									</cpp>
+								</configuration>
+							</execution>
+							<execution>
+								<id>test</id>
+								<phase>test</phase>
+								<goals>
+									<!--<goal>test</goal>-->
+									<goal>nar-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>package</id>
+								<phase>package</phase>
+								<goals>
+									<goal>nar-package</goal>
+									<!--<goal>jar</goal>-->
+								</goals>
+							</execution>
+							<execution>
+								<id>integration-test</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>nar-integration-test</goal>
+								</goals>
+							</execution>
+
+						</executions>
+					</plugin>
+		
+				</plugins>
+			</build>
+			
+			<dependencies>
+		
+		
+			</dependencies>
+
+		</profile>
+		
+	</profiles>
+
+</project>
+

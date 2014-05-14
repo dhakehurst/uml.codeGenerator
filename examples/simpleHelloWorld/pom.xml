@@ -1,0 +1,131 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.akehurst.uml</groupId>
+	<artifactId>examples.simpleHelloWorld</artifactId>
+	<!-- packaging default -->
+	<version>0.1.0</version>
+
+	<parent>
+		<groupId>net.akehurst.uml.codeGenerator</groupId>
+		<artifactId>uml.codeGenerator.buildConfiguration</artifactId>
+		<version>0.1.0</version>
+	</parent>
+
+	<!-- More Project Information -->
+	<name>${project.artifactId}</name>
+	<description>...</description>
+	<url>...</url>
+	<inceptionYear>2014</inceptionYear>
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+			<distribution></distribution>
+			<comments>(c) Dr. David H. Akehurst</comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Dr. David H. Akehurst</name>
+		<url></url>
+	</organization>	
+	
+	<scm>
+		<connection>scm:git:git://github.com/dhakehurst/uml.codeGenerator.git</connection>
+	</scm>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>net.akehurst.uml</groupId>
+        	<artifactId>uml.library</artifactId>
+        	<type>uar</type>
+			<version>0.1.0</version>
+		</dependency>
+
+	</dependencies>
+
+
+    <build>
+		<plugins>
+
+            <!-- Code Generator -->
+			<plugin>
+				<groupId>net.akehurst.uml</groupId>
+				<artifactId>uml.codeGenerator.csharp</artifactId>
+				<version>0.1.0</version>
+				<configuration>
+					<models>
+						<modelUri>${basedir}/src/main/uml/SimpleHelloWorld.uml</modelUri>
+					</models>
+					<targetFolder>${basedir}/..</targetFolder>
+					<acceleoModuleFile>/mdd/codeGenerator/csharp/generate_Artifact</acceleoModuleFile>
+					<acceleoTemplates>generate</acceleoTemplates>
+					<artifacts>
+
+						<artifact>
+							<name>simpleHelloWorld</name>
+							<properties>
+								artifact.codeFolder=target/build-sources
+								artifact.testFolder=target/test-build-sources
+								pom.generate=false
+								pom.groupId=net.akehurst.mdd
+								mdd.framework-pom.groupId=net.akehurst.mdd
+							</properties>
+						</artifact>
+
+					</artifacts>
+
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>csharp</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.npanday.plugins</groupId>
+                <artifactId>maven-compile-plugin</artifactId>
+                <version>1.5.0-incubating-SNAPSHOT</version>
+                <extensions>true</extensions>
+				<configuration>
+				  <frameworkVersion>4.0</frameworkVersion>
+				  <testFrameworkVersion>4.0</testFrameworkVersion>
+				</configuration>
+            </plugin>
+
+            <!-- Deployment -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/descriptor.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+		</plugins>
+
+	</build>
+	
+</project>
