@@ -41,73 +41,138 @@
 		<sourceDirectory>${main.directory}</sourceDirectory>
 		<testSourceDirectory>${test.directory}</testSourceDirectory>
 
-		<pluginManagement>
+		<plugins>
 
-			<plugins>
+			<plugin>
+                <groupId>de.smartics.maven.plugin</groupId>
+                <artifactId>maven-buildmetadata-plugin</artifactId>
+                <version>1.1.5</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>provide-buildmetadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+			</plugin>
 
-				<plugin>
-                    <groupId>de.smartics.maven.plugin</groupId>
-                    <artifactId>maven-buildmetadata-plugin</artifactId>
-                    <version>1.1.5</version>
-                    <executions>
-                        <execution>
-                            <phase>initialize</phase>
-                            <goals>
-                                <goal>provide-buildmetadata</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-				</plugin>
+            <!-- disable default plugins -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase/>
+                    </execution>
+                </executions>
+            </plugin>
 
-				<!-- Model -->
-				<plugin>
-					<groupId>net.akehurst.maven.plugins</groupId>
-					<artifactId>eclipse-uml-maven-plugin</artifactId>
-                    <version>0.7.0</version>
-                    <extensions>true</extensions>
-				</plugin>
-
-			</plugins>
-
-		</pluginManagement>
+		</plugins>
 
 	</build>
 
 	<dependencies>
 	
-		<dependency>
-			<groupId>net.akehurst.uml.codeGenerator</groupId>
-			<artifactId>uml.codeGenerator.java</artifactId>
-			<version>0.1.0</version>		
-		</dependency>
-		<dependency>
-			<groupId>net.akehurst.uml.codeGenerator</groupId>
-			<artifactId>uml.codeGenerator.csharp</artifactId>
-			<version>0.1.0</version>		
-		</dependency>
-		<dependency>
-			<groupId>net.akehurst.uml.codeGenerator</groupId>
-			<artifactId>uml.codeGenerator.cpp</artifactId>
-			<version>0.1.0</version>		
-		</dependency>
-	
 	</dependencies>  
 
 	<profiles>
 
+        <profile>
+            <id>uml</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+
+				    <plugin>
+					    <groupId>net.akehurst.maven.plugins</groupId>
+					    <artifactId>eclipse-uml-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>initialize</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>initialize</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>prepare-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>prepare-package</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>package</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>uar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+				    </plugin>
+
+    			</plugins>
+            </build>
+        </profile>
+
 		<profile>
-			<id>jdk_1_7</id>
+			<id>java_7</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<main.directory>src/main/jdk_1_7</main.directory>
-				<test.directory>src/test/jdk_1_7</test.directory>
+				<main.directory>${basedir}/src/main/java</main.directory>
+				<test.directory>${basedir}/src/test/java</test.directory>
 				<module.type>jar</module.type>
 			</properties>
 
 			<build>
 				<plugins>
+				
+					<plugin>
+						<groupId>net.akehurst.uml.codeGenerator</groupId>
+						<artifactId>uml.codeGenerator.java</artifactId>
+						<version>7.1.0</version>
+						<configuration>
+							<models>
+								<modelUri>${basedir}/src/main/uml/${project.artifactId}.uml</modelUri>
+							</models>
+							<targetFolder>${basedir}/..</targetFolder>
+							<acceleoModuleFile>/mdd/codeGenerator/csharp/generate_Artifact</acceleoModuleFile>
+							<acceleoTemplates>generate</acceleoTemplates>
+							<artifacts>
+		
+								<artifact>
+									<name>${project.artifactId}</name>
+									<properties>
+										artifact.codeFolder=target/classes
+										artifact.testFolder=target/test-classes
+										pom.generate=false
+										pom.groupId=net.akehurst.uml.examples
+										mdd.framework-pom.groupId=net.akehurst.uml.examples
+									</properties>
+								</artifact>
+		
+							</artifacts>
+		
+						</configuration>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>				
+				
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
@@ -143,7 +208,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
 						<configuration>
-							<classifier>jdk_1_7</classifier>
+							<classifier>java_7</classifier>
 						</configuration>
 						<executions>
 							<execution>
