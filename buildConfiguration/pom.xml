@@ -85,6 +85,10 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<main.directory>${basedir}/src/main/uml</main.directory>
+				<test.directory>${basedir}/src/test/uml</test.directory>
+			</properties>
 			<build>
 				<plugins>
 
@@ -449,7 +453,8 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>nar-maven-plugin</artifactId>
-						<version>3.0.0-scijava-2</version>
+						<version>3.0.1-SNAPSHOT</version>
+						<!--<version>3.0.0-scijava-2</version>-->
 						<configuration>
 							<libraries>
 								<library>
